@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 struct node{
+    struct node* prev;
     int data;
     struct node* next;
 }*temp,*newnode;
@@ -14,6 +15,7 @@ void create()
         newnode=(struct node*)malloc(sizeof(struct node));
         printf("enter the data\n");
         scanf("%d",&val);
+        newnode->prev=NULL;
         newnode->data=val;
         newnode->next=NULL;
         if(head==NULL){
@@ -22,9 +24,9 @@ void create()
         }
         else{
             tail->next=newnode;
+            newnode->prev=tail;
             tail=newnode;
         }
-        tail->next=head;
         printf("enter 1 to continue 0 to exit");
         scanf("%d",&v);
     }while(v==1);
@@ -32,12 +34,11 @@ void create()
 void display()
 {
     temp=head;
-    while(temp->next!=head)
+    while(temp!=NULL)
     {
         printf("%d ",temp->data);
         temp=temp->next;
     }
-    printf("%d",temp->data);
 }
 void insert_beg()
 {
@@ -47,8 +48,9 @@ void insert_beg()
     scanf("%d",&ib);
     newnode->data=ib;
     newnode->next=head;
+    head->prev=newnode;
+    newnode->prev=NULL;
     head=newnode;
-    tail->next=head;
 }
 void insert_end()
 {
@@ -58,7 +60,7 @@ void insert_end()
     scanf("%d",&ie);
     newnode->data=ie;
     tail->next=newnode;
-    newnode->next=head;
+    newnode->prev=tail;
     tail=newnode;
 }
 void insert_spe()
@@ -76,6 +78,8 @@ void insert_spe()
     }
     newnode->data=ip;
     newnode->next=temp->next;
+    newnode->prev=temp;
+    temp->next->prev=newnode;
     temp->next=newnode;
 }
 void delete_beg()
@@ -83,16 +87,13 @@ void delete_beg()
     temp=head;
     head=head->next;
     temp->next=NULL;
-    tail->next=head;
+    head->prev=NULL;
 }
 void delete_end()
 {
-    temp=head;
-    while(temp->next!=tail)
-    {
-        temp=temp->next;
-    }
-    temp->next=head;
+    temp=tail->prev;
+    temp->next=NULL;
+    tail->prev=NULL;
     tail=temp;
 }
 void delete_spe()
@@ -105,19 +106,28 @@ void delete_spe()
     {
         temp=temp->next;
     }
+    temp->next->next->prev=temp;
     temp->next=temp->next->next;
 }
 void count()
 {
     int count=0;
     temp=head;
-    while(temp->next!=head)
+    while(temp!=NULL)
     {
         temp=temp->next;
         count=count+1;
     }
-    count=count+1;
     printf("%d",count);
+}
+void reverse()
+{
+    temp=tail;
+    while(temp!=NULL)
+    {
+        printf("%d ",temp->data);
+        temp=temp->prev;
+    }
 }
 void main()
 {
@@ -125,45 +135,53 @@ void main()
     create();
     printf("list before\n");
     display();
-    printf("enter choice 1.insertion 2.deletion 3.count ");
+    printf("\nenter choice 1.insertion 2.deletion 3.count 4.reverse");
     scanf("%d",&choice);
     switch(choice)
     {
-        case 1:printf("enter your choice 1.at beginning 2.at ending 3.at specified position");
+        case 1:printf("\nenter your choice 1.at beginning 2.at ending 3.at specified position");
         scanf("%d",&j);
-        printf("after insertion\n");
         if(j==1){
             insert_beg();
+            printf("after insertion\n");
             display();
         }
         if(j==2){
             insert_end();
+            printf("after insertion\n");
             display();
         }
         if(j==3){
             insert_spe();
+            printf("after insertion\n");
             display();
         }
         break;
-        case 2:printf("enter your choice 1.at beginning 2.at ending 3.at specified position");
+        case 2:printf("\nenter your choice 1.at beginning 2.at ending 3.at specified position");
         scanf("%d",&j);
-        printf("after deletion\n");
         if(j==1){
             delete_beg();
+            printf("after deletion\n");
             display();
         }
         if(j==2){
             delete_end();
+            printf("after deletion\n");
             display();
         }
         if(j==3){
             delete_spe();
+            printf("after deletion\n");
             display();
         }
         break;
         case 3:
         printf("total elements are");
         count();
+        break;
+        case 4:
+        printf("elements in reverse order:");
+        reverse();
         break;
         default:printf("wrong choice");
     }
